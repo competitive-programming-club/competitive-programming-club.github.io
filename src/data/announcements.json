@@ -1,0 +1,16 @@
+[
+  // =============================================
+  // ANNOUNCEMENTS DATA FILE
+  // =============================================
+  // Add one object per announcement. Newest first.
+  //
+  // FORMAT:
+  // {
+  //   "date": "April 10, 2026",
+  //   "text": "Your announcement text here"
+  // }
+  //
+  // EXAMPLE:
+  // { "date": "April 5, 2026", "text": "Weekly Contest #42 results are out!" }
+  // =============================================
+]

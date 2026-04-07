@@ -1,0 +1,19 @@
+{
+  // =============================================
+  // CONTESTS DATA FILE
+  // =============================================
+  // Add contests to "upcoming" or "past" arrays.
+  //
+  // FORMAT:
+  // {
+  //   "date": "April 10, 2026",
+  //   "name": "Contest Name",
+  //   "platform": "Codeforces",   (Codeforces | CodeChef | LeetCode | AtCoder | Club)
+  //   "link": "https://...",
+  //   "duration": "2h"
+  // }
+  // =============================================
+
+  "upcoming": [],
+  "past": []
+}
