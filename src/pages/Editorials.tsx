@@ -1,39 +1,14 @@
 import { useState } from "react";
+import editorialsData from "@/data/editorials.json";
+import type { Editorial } from "@/data/types";
 
-// =============================================
-// EDITORIALS — Edit the array below
-// =============================================
-// ADD EDITORIALS HERE — copy this template:
-// {
-//   title: "Problem A - Problem Name",
-//   contest: "CF Round #959",
-//   platform: "Codeforces",   // "Codeforces" | "CodeChef" | "LeetCode" | "Club"
-//   date: "April 3, 2026",
-//   difficulty: "Easy",       // "Easy" | "Medium" | "Hard"
-//   author: "Author Name",
-//   link: "#",                // link to the editorial page or document
-// },
-
-interface Editorial {
-  title: string;
-  contest: string;
-  platform: string;
-  date: string;
-  difficulty: string;
-  author: string;
-  link: string;
-}
-
-const editorials: Editorial[] = [
-  // PASTE YOUR EDITORIALS BELOW:
-
-];
+const allEditorials = editorialsData as Editorial[];
 
 function getDifficultyClass(d: string): string {
   switch (d) {
-    case "Easy": return "text-green-600";
-    case "Medium": return "text-amber-600";
-    case "Hard": return "text-red-600";
+    case "Easy": return "text-green-600 dark:text-green-400";
+    case "Medium": return "text-amber-600 dark:text-amber-400";
+    case "Hard": return "text-red-600 dark:text-red-400";
     default: return "text-muted-foreground";
   }
 }
@@ -43,11 +18,11 @@ const Editorials = () => {
 
   const platforms = ["all", "Codeforces", "CodeChef", "LeetCode", "Club"];
   const filtered = platformFilter === "all"
-    ? editorials
-    : editorials.filter((e) => e.platform === platformFilter);
+    ? allEditorials
+    : allEditorials.filter((e) => e.platform === platformFilter);
 
   return (
-    <article className="max-w-3xl">
+    <article>
       <h1 className="text-2xl mb-4 pb-2 border-b border-border">Editorials</h1>
 
       <p className="mb-4 text-foreground leading-relaxed">
@@ -84,9 +59,9 @@ const Editorials = () => {
             </thead>
             <tbody>
               {filtered.map((e, i) => (
-                <tr key={i} className="border-b border-border">
+                <tr key={i} className="border-b border-border hover:bg-muted/50 transition-colors">
                   <td className="py-2 pr-3">
-                    <a href={e.link} className="font-medium">{e.title}</a>
+                    <a href={e.link} target="_blank" rel="noreferrer" className="font-medium">{e.title}</a>
                   </td>
                   <td className="py-2 pr-3 text-muted-foreground">{e.contest}</td>
                   <td className="py-2 pr-3">
@@ -100,9 +75,12 @@ const Editorials = () => {
           </table>
         </div>
       ) : (
-        <p className="py-8 text-center text-muted-foreground text-sm">
-          No editorials yet. Add them in <code>src/pages/Editorials.tsx</code>
-        </p>
+        <div className="py-12 text-center text-muted-foreground text-sm border border-dashed border-border rounded-sm">
+          <p>No editorials yet.</p>
+          <p className="mt-1 text-xs">
+            Add them in <code className="bg-muted px-1 py-0.5 rounded text-xs">src/data/editorials.json</code>
+          </p>
+        </div>
       )}
     </article>
   );

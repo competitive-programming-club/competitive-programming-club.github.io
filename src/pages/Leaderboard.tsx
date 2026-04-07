@@ -1,40 +1,10 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
+import membersData from "@/data/members.json";
+import { fetchAllRatings } from "@/lib/api";
+import type { MemberData, MemberWithRatings } from "@/data/types";
 
 type Platform = "all" | "codeforces" | "codechef" | "leetcode";
 type StatusFilter = "active" | "all_members";
-
-// =============================================
-// LEADERBOARD — Edit the members array below
-// =============================================
-// ADD MEMBERS HERE — copy this template:
-// {
-//   name: "Full Name",
-//   cfRating: 1500,       // Codeforces rating (or null)
-//   cfHandle: "cf_handle", // Codeforces handle (or null)
-//   ccRating: 1500,       // CodeChef rating (or null)
-//   ccHandle: "cc_handle", // CodeChef handle (or null)
-//   lcRating: 1500,       // LeetCode rating (or null)
-//   lcHandle: "lc_handle", // LeetCode handle (or null)
-//   isAlumni: false,      // true if graduated
-//   isActive: true,       // true if currently active
-// },
-
-interface Member {
-  name: string;
-  cfRating: number | null;
-  cfHandle: string | null;
-  ccRating: number | null;
-  ccHandle: string | null;
-  lcRating: number | null;
-  lcHandle: string | null;
-  isAlumni: boolean;
-  isActive: boolean;
-}
-
-const members: Member[] = [
-  // PASTE YOUR MEMBERS BELOW THIS LINE:
-
-];
 
 function getCfRankColor(rating: number): string {
   if (rating >= 2400) return "#ff0000";
@@ -50,6 +20,21 @@ const Leaderboard = () => {
   const [platform, setPlatform] = useState<Platform>("all");
   const [status, setStatus] = useState<StatusFilter>("active");
   const [includeAlumni, setIncludeAlumni] = useState(false);
+  const [members, setMembers] = useState<MemberWithRatings[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const raw = membersData as MemberData[];
+    if (raw.length === 0) {
+      setMembers([]);
+      setLoading(false);
+      return;
+    }
+    fetchAllRatings(raw).then((result) => {
+      setMembers(result);
+      setLoading(false);
+    });
+  }, []);
 
   const filtered = useMemo(() => {
     let result = [...members];
@@ -63,7 +48,7 @@ const Leaderboard = () => {
     }
 
     result.sort((a, b) => {
-      const getRating = (m: Member) => {
+      const getRating = (m: MemberWithRatings) => {
         switch (platform) {
           case "codeforces": return m.cfRating || 0;
           case "codechef": return m.ccRating || 0;
@@ -75,7 +60,7 @@ const Leaderboard = () => {
     });
 
     return result;
-  }, [platform, status, includeAlumni]);
+  }, [platform, status, includeAlumni, members]);
 
   const platformTabs: { key: Platform; label: string }[] = [
     { key: "all", label: "ALL" },
@@ -85,7 +70,7 @@ const Leaderboard = () => {
   ];
 
   return (
-    <article className="max-w-4xl">
+    <article>
       <h1 className="text-2xl mb-4 pb-2 border-b border-border">Leaderboard</h1>
 
       {/* Platform filter tabs */}
@@ -123,68 +108,88 @@ const Leaderboard = () => {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="border-b-2 border-border">
-              <th className="py-2 pr-3 font-semibold">#</th>
-              <th className="py-2 pr-3 font-semibold">Name</th>
-              {(platform === "all" || platform === "codeforces") && <th className="py-2 pr-3 font-semibold">CF Rating</th>}
-              {(platform === "all" || platform === "codechef") && <th className="py-2 pr-3 font-semibold">CC Rating</th>}
-              {(platform === "all" || platform === "leetcode") && <th className="py-2 pr-3 font-semibold">LC Rating</th>}
-              <th className="py-2 font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((member, i) => (
-              <tr key={member.name} className={`border-b border-border ${member.isAlumni ? "opacity-70" : ""}`}>
-                <td className="py-2 pr-3 text-muted-foreground">{i + 1}</td>
-                <td className="py-2 pr-3 font-medium">{member.name}</td>
-                {(platform === "all" || platform === "codeforces") && (
-                  <td className="py-2 pr-3">
-                    {member.cfRating ? (
-                      <a href={`https://codeforces.com/profile/${member.cfHandle}`} target="_blank" rel="noreferrer" style={{ color: getCfRankColor(member.cfRating), fontWeight: 500 }}>
-                        {member.cfRating}
-                      </a>
-                    ) : <span className="text-muted-foreground">—</span>}
-                  </td>
-                )}
-                {(platform === "all" || platform === "codechef") && (
-                  <td className="py-2 pr-3">
-                    {member.ccRating ? (
-                      <a href={`https://www.codechef.com/users/${member.ccHandle}`} target="_blank" rel="noreferrer" className="font-medium">
-                        {member.ccRating}
-                      </a>
-                    ) : <span className="text-muted-foreground">—</span>}
-                  </td>
-                )}
-                {(platform === "all" || platform === "leetcode") && (
-                  <td className="py-2 pr-3">
-                    {member.lcRating ? (
-                      <a href={`https://leetcode.com/u/${member.lcHandle}`} target="_blank" rel="noreferrer" className="font-medium">
-                        {member.lcRating}
-                      </a>
-                    ) : <span className="text-muted-foreground">—</span>}
-                  </td>
-                )}
-                <td className="py-2">
-                  {member.isAlumni ? (
-                    <span className="inline-block px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-sm">Alumni</span>
-                  ) : member.isActive ? (
-                    <span className="inline-block px-1.5 py-0.5 text-[10px] bg-green-100 text-green-700 rounded-sm">Active</span>
-                  ) : (
-                    <span className="inline-block px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-sm">Inactive</span>
-                  )}
-                </td>
+      {loading ? (
+        <div className="py-12 text-center text-muted-foreground text-sm">
+          <div className="inline-block w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin mb-2" />
+          <p>Fetching live ratings...</p>
+        </div>
+      ) : members.length === 0 ? (
+        <div className="py-12 text-center text-muted-foreground text-sm border border-dashed border-border rounded-sm">
+          <p>No members added yet.</p>
+          <p className="mt-1 text-xs">
+            Add members in <code className="bg-muted px-1 py-0.5 rounded text-xs">src/data/members.json</code>
+          </p>
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b-2 border-border">
+                <th className="py-2 pr-3 font-semibold">#</th>
+                <th className="py-2 pr-3 font-semibold">Name</th>
+                {(platform === "all" || platform === "codeforces") && <th className="py-2 pr-3 font-semibold">CF Rating</th>}
+                {(platform === "all" || platform === "codechef") && <th className="py-2 pr-3 font-semibold">CC Rating</th>}
+                {(platform === "all" || platform === "leetcode") && <th className="py-2 pr-3 font-semibold">LC Rating</th>}
+                <th className="py-2 font-semibold">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              {filtered.map((member, i) => (
+                <tr key={member.name} className={`border-b border-border hover:bg-muted/50 transition-colors ${member.isAlumni ? "opacity-70" : ""}`}>
+                  <td className="py-2 pr-3 text-muted-foreground">{i + 1}</td>
+                  <td className="py-2 pr-3 font-medium">{member.name}</td>
+                  {(platform === "all" || platform === "codeforces") && (
+                    <td className="py-2 pr-3">
+                      {member.cfRating ? (
+                        <a href={`https://codeforces.com/profile/${member.codeforces}`} target="_blank" rel="noreferrer" style={{ color: getCfRankColor(member.cfRating), fontWeight: 600 }}>
+                          {member.cfRating}
+                        </a>
+                      ) : member.codeforces ? (
+                        <a href={`https://codeforces.com/profile/${member.codeforces}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
+                      ) : <span className="text-muted-foreground">—</span>}
+                    </td>
+                  )}
+                  {(platform === "all" || platform === "codechef") && (
+                    <td className="py-2 pr-3">
+                      {member.ccRating ? (
+                        <a href={`https://www.codechef.com/users/${member.codechef}`} target="_blank" rel="noreferrer" className="font-medium">
+                          {member.ccRating}
+                        </a>
+                      ) : member.codechef ? (
+                        <a href={`https://www.codechef.com/users/${member.codechef}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
+                      ) : <span className="text-muted-foreground">—</span>}
+                    </td>
+                  )}
+                  {(platform === "all" || platform === "leetcode") && (
+                    <td className="py-2 pr-3">
+                      {member.lcRating ? (
+                        <a href={`https://leetcode.com/u/${member.leetcode}`} target="_blank" rel="noreferrer" className="font-medium">
+                          {member.lcRating}
+                        </a>
+                      ) : member.leetcode ? (
+                        <a href={`https://leetcode.com/u/${member.leetcode}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
+                      ) : <span className="text-muted-foreground">—</span>}
+                    </td>
+                  )}
+                  <td className="py-2">
+                    {member.isAlumni ? (
+                      <span className="inline-block px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-sm">Alumni</span>
+                    ) : member.isActive ? (
+                      <span className="inline-block px-1.5 py-0.5 text-[10px] bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-sm">Active</span>
+                    ) : (
+                      <span className="inline-block px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-sm">Inactive</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
 
-      {filtered.length === 0 && (
+      {!loading && members.length > 0 && filtered.length === 0 && (
         <p className="py-8 text-center text-muted-foreground text-sm">
-          No members yet. Add members in <code>src/pages/Leaderboard.tsx</code>
+          No members match the current filters.
         </p>
       )}
     </article>

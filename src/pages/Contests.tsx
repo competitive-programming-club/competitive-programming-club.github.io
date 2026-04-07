@@ -1,36 +1,15 @@
-// =============================================
-// CONTEST CALENDAR — Edit the arrays below
-// =============================================
-// ADD CONTESTS HERE — copy this template:
-// { date: "April 10, 2026", name: "Contest Name", platform: "Codeforces", link: "https://...", duration: "2h" },
-//
-// Supported platforms for badge colors: "Codeforces", "CodeChef", "LeetCode", "AtCoder", "Club"
+import contestsData from "@/data/contests.json";
+import type { Contest } from "@/data/types";
 
-interface Contest {
-  date: string;
-  name: string;
-  platform: string;
-  link: string;
-  duration: string;
-}
-
-const upcoming: Contest[] = [
-  // PASTE UPCOMING CONTESTS BELOW:
-
-];
-
-const past: Contest[] = [
-  // PASTE PAST CONTESTS BELOW:
-
-];
+const data = contestsData as { upcoming: Contest[]; past: Contest[] };
 
 function getPlatformBadgeClass(platform: string): string {
   switch (platform) {
-    case "Codeforces": return "bg-blue-100 text-blue-700";
-    case "CodeChef": return "bg-amber-100 text-amber-700";
-    case "LeetCode": return "bg-orange-100 text-orange-700";
-    case "AtCoder": return "bg-gray-200 text-gray-700";
-    case "Club": return "bg-purple-100 text-purple-700";
+    case "Codeforces": return "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400";
+    case "CodeChef": return "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400";
+    case "LeetCode": return "bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400";
+    case "AtCoder": return "bg-gray-200 text-gray-700 dark:bg-gray-700/30 dark:text-gray-400";
+    case "Club": return "bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400";
     default: return "bg-muted text-muted-foreground";
   }
 }
@@ -39,7 +18,9 @@ const ContestTable = ({ contests, title }: { contests: Contest[]; title: string 
   <>
     <h2 className="text-lg mb-3 mt-8 pb-1 border-b border-border">{title}</h2>
     {contests.length === 0 ? (
-      <p className="text-muted-foreground text-sm mb-6">No contests yet.</p>
+      <div className="py-6 text-center text-muted-foreground text-sm border border-dashed border-border rounded-sm mb-6">
+        No contests yet. Add them in <code className="bg-muted px-1 py-0.5 rounded text-xs">src/data/contests.json</code>
+      </div>
     ) : (
       <div className="overflow-x-auto mb-6">
         <table className="w-full text-left border-collapse text-xs">
@@ -53,7 +34,7 @@ const ContestTable = ({ contests, title }: { contests: Contest[]; title: string 
           </thead>
           <tbody>
             {contests.map((c, i) => (
-              <tr key={i} className="border-b border-border">
+              <tr key={i} className="border-b border-border hover:bg-muted/50 transition-colors">
                 <td className="py-2 pr-3 text-muted-foreground whitespace-nowrap">{c.date}</td>
                 <td className="py-2 pr-3">
                   <a href={c.link} target="_blank" rel="noreferrer">{c.name}</a>
@@ -75,13 +56,13 @@ const ContestTable = ({ contests, title }: { contests: Contest[]; title: string 
 
 const Contests = () => {
   return (
-    <article className="max-w-3xl">
+    <article>
       <h1 className="text-2xl mb-4 pb-2 border-b border-border">Contest Calendar</h1>
       <p className="mb-4 text-foreground leading-relaxed">
         Upcoming and past competitive programming contests.
       </p>
-      <ContestTable contests={upcoming} title="Upcoming Contests" />
-      <ContestTable contests={past} title="Past Contests" />
+      <ContestTable contests={data.upcoming} title="Upcoming Contests" />
+      <ContestTable contests={data.past} title="Past Contests" />
     </article>
   );
 };
