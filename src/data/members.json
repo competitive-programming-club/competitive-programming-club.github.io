@@ -1,1 +1,23 @@
-[]
+// 1. members.json — Club members for the leaderboard
+//    Format: Array of objects
+//    [
+//      {
+//        "name": "Full Name",
+//        "codeforces": "cf_handle",    ← leave "" if no account
+//        "codechef": "cc_handle",      ← leave "" if no account
+//        "leetcode": "lc_handle",      ← leave "" if no account
+//        "isAlumni": false,            ← true if graduated
+//        "isActive": true              ← true if currently active
+//      }
+//    ]
+//    If a username is provided, LIVE ratings are fetched from the API.
+[
+  {
+    "name": "Sukumar Sawant",
+    "codeforces": "Zorojuro",
+    "codechef": "sukumarsawant",
+    "leetcode": "Zorojuro",
+    "isAlumni": false,
+    "isActive": true
+  }
+]
