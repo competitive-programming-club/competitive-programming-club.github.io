@@ -1,5 +1,19 @@
 import { useState } from "react";
 
+// =============================================
+// EDITORIALS — Edit the array below
+// =============================================
+// ADD EDITORIALS HERE — copy this template:
+// {
+//   title: "Problem A - Problem Name",
+//   contest: "CF Round #959",
+//   platform: "Codeforces",   // "Codeforces" | "CodeChef" | "LeetCode" | "Club"
+//   date: "April 3, 2026",
+//   difficulty: "Easy",       // "Easy" | "Medium" | "Hard"
+//   author: "Author Name",
+//   link: "#",                // link to the editorial page or document
+// },
+
 interface Editorial {
   title: string;
   contest: string;
@@ -7,18 +21,12 @@ interface Editorial {
   date: string;
   difficulty: string;
   author: string;
+  link: string;
 }
 
 const editorials: Editorial[] = [
-  { title: "Problem A - XOR Queries", contest: "CF Round #959", platform: "Codeforces", date: "April 3, 2026", difficulty: "Easy", author: "Arjun Sharma" },
-  { title: "Problem B - Tree Distances", contest: "CF Round #959", platform: "Codeforces", date: "April 3, 2026", difficulty: "Medium", author: "Priya Patel" },
-  { title: "Problem C - Segment Operations", contest: "CF Round #959", platform: "Codeforces", date: "April 3, 2026", difficulty: "Hard", author: "Vikram Singh" },
-  { title: "Problem A - Array Manipulation", contest: "CC Starters 179", platform: "CodeChef", date: "March 30, 2026", difficulty: "Easy", author: "Sneha Gupta" },
-  { title: "Problem B - Graph Coloring", contest: "CC Starters 179", platform: "CodeChef", date: "March 30, 2026", difficulty: "Medium", author: "Rahul Verma" },
-  { title: "Q1 - Two Sum Variant", contest: "LC Weekly 440", platform: "LeetCode", date: "March 28, 2026", difficulty: "Easy", author: "Meera Iyer" },
-  { title: "Q3 - Dynamic Median", contest: "LC Weekly 440", platform: "LeetCode", date: "March 28, 2026", difficulty: "Hard", author: "Deepak Kumar" },
-  { title: "Problem A - Club Challenge", contest: "Club Weekly #41", platform: "Club", date: "March 29, 2026", difficulty: "Easy", author: "Karan Mehta" },
-  { title: "Problem C - DP on Trees", contest: "Club Weekly #41", platform: "Club", date: "March 29, 2026", difficulty: "Hard", author: "Arjun Sharma" },
+  // PASTE YOUR EDITORIALS BELOW:
+
 ];
 
 function getDifficultyClass(d: string): string {
@@ -43,7 +51,7 @@ const Editorials = () => {
       <h1 className="text-2xl mb-4 pb-2 border-b border-border">Editorials</h1>
 
       <p className="mb-4 text-foreground leading-relaxed">
-        Problem editorials and solutions written by club members. Filter by platform to find specific contest editorials.
+        Problem editorials and solutions written by club members.
       </p>
 
       <div className="flex flex-wrap gap-1 mb-6">
@@ -62,40 +70,38 @@ const Editorials = () => {
         ))}
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="border-b-2 border-border">
-              <th className="py-2 pr-3 font-semibold">Title</th>
-              <th className="py-2 pr-3 font-semibold">Contest</th>
-              <th className="py-2 pr-3 font-semibold">Difficulty</th>
-              <th className="py-2 pr-3 font-semibold">Author</th>
-              <th className="py-2 font-semibold">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((e, i) => (
-              <tr key={i} className="border-b border-border">
-                <td className="py-2 pr-3">
-                  <a href="#" className="font-medium">{e.title}</a>
-                </td>
-                <td className="py-2 pr-3 text-muted-foreground">{e.contest}</td>
-                <td className="py-2 pr-3">
-                  <span className={`font-medium ${getDifficultyClass(e.difficulty)}`}>
-                    {e.difficulty}
-                  </span>
-                </td>
-                <td className="py-2 pr-3">{e.author}</td>
-                <td className="py-2 text-muted-foreground whitespace-nowrap">{e.date}</td>
+      {filtered.length > 0 ? (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b-2 border-border">
+                <th className="py-2 pr-3 font-semibold">Title</th>
+                <th className="py-2 pr-3 font-semibold">Contest</th>
+                <th className="py-2 pr-3 font-semibold">Difficulty</th>
+                <th className="py-2 pr-3 font-semibold">Author</th>
+                <th className="py-2 font-semibold">Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {filtered.length === 0 && (
-        <p className="py-8 text-center text-muted-foreground">
-          No editorials found for this platform.
+            </thead>
+            <tbody>
+              {filtered.map((e, i) => (
+                <tr key={i} className="border-b border-border">
+                  <td className="py-2 pr-3">
+                    <a href={e.link} className="font-medium">{e.title}</a>
+                  </td>
+                  <td className="py-2 pr-3 text-muted-foreground">{e.contest}</td>
+                  <td className="py-2 pr-3">
+                    <span className={`font-medium ${getDifficultyClass(e.difficulty)}`}>{e.difficulty}</span>
+                  </td>
+                  <td className="py-2 pr-3">{e.author}</td>
+                  <td className="py-2 text-muted-foreground whitespace-nowrap">{e.date}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <p className="py-8 text-center text-muted-foreground text-sm">
+          No editorials yet. Add them in <code>src/pages/Editorials.tsx</code>
         </p>
       )}
     </article>
