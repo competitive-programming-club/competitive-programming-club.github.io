@@ -1,18 +1,1 @@
-[
-  // =============================================
-  // EDITORIALS DATA FILE
-  // =============================================
-  // Add one object per editorial.
-  //
-  // FORMAT:
-  // {
-  //   "title": "Problem A - Problem Name",
-  //   "contest": "CF Round #959",
-  //   "platform": "Codeforces",    (Codeforces | CodeChef | LeetCode | Club)
-  //   "date": "April 3, 2026",
-  //   "difficulty": "Easy",        (Easy | Medium | Hard)
-  //   "author": "Author Name",
-  //   "link": "https://..."
-  // }
-  // =============================================
-]
+[]

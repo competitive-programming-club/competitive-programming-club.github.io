@@ -1,10 +1,4 @@
 {
-  // =============================================
-  // SITE CONFIG
-  // =============================================
-  // Edit these values to customize your club site.
-  // =============================================
-
   "clubName": "CP Club",
   "description": "A community of competitive programmers.",
   "stats": {
