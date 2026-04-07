@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import membersData from "@/data/members.json";
 import { fetchAllRatings } from "@/lib/api";
 import type { MemberData, MemberWithRatings } from "@/data/types";
+import { ExternalLink } from "lucide-react";
 
 type Platform = "all" | "codeforces" | "codechef" | "leetcode";
 type StatusFilter = "active" | "all_members";
@@ -15,6 +16,18 @@ function getCfRankColor(rating: number): string {
   if (rating >= 1200) return "#008000";
   return "#808080";
 }
+
+const ProfileLink = ({ url, label }: { url: string; label: string }) => (
+  <a
+    href={url}
+    target="_blank"
+    rel="noreferrer"
+    className="inline-flex items-center gap-1 text-primary hover:underline"
+  >
+    {label}
+    <ExternalLink className="w-3 h-3" />
+  </a>
+);
 
 const Leaderboard = () => {
   const [platform, setPlatform] = useState<Platform>("all");
@@ -53,7 +66,7 @@ const Leaderboard = () => {
           case "codeforces": return m.cfRating || 0;
           case "codechef": return m.ccRating || 0;
           case "leetcode": return m.lcRating || 0;
-          default: return Math.max(m.cfRating || 0, m.ccRating || 0, m.lcRating || 0);
+          default: return m.cfRating || 0;
         }
       };
       return getRating(b) - getRating(a);
@@ -127,9 +140,9 @@ const Leaderboard = () => {
               <tr className="border-b-2 border-border">
                 <th className="py-2 pr-3 font-semibold">#</th>
                 <th className="py-2 pr-3 font-semibold">Name</th>
-                {(platform === "all" || platform === "codeforces") && <th className="py-2 pr-3 font-semibold">CF Rating</th>}
-                {(platform === "all" || platform === "codechef") && <th className="py-2 pr-3 font-semibold">CC Rating</th>}
-                {(platform === "all" || platform === "leetcode") && <th className="py-2 pr-3 font-semibold">LC Rating</th>}
+                {(platform === "all" || platform === "codeforces") && <th className="py-2 pr-3 font-semibold">Codeforces</th>}
+                {(platform === "all" || platform === "codechef") && <th className="py-2 pr-3 font-semibold">CodeChef</th>}
+                {(platform === "all" || platform === "leetcode") && <th className="py-2 pr-3 font-semibold">LeetCode</th>}
                 <th className="py-2 font-semibold">Status</th>
               </tr>
             </thead>
@@ -138,39 +151,42 @@ const Leaderboard = () => {
                 <tr key={member.name} className={`border-b border-border hover:bg-muted/50 transition-colors ${member.isAlumni ? "opacity-70" : ""}`}>
                   <td className="py-2 pr-3 text-muted-foreground">{i + 1}</td>
                   <td className="py-2 pr-3 font-medium">{member.name}</td>
+
+                  {/* Codeforces — live rating */}
                   {(platform === "all" || platform === "codeforces") && (
                     <td className="py-2 pr-3">
-                      {member.cfRating ? (
-                        <a href={`https://codeforces.com/profile/${member.codeforces}`} target="_blank" rel="noreferrer" style={{ color: getCfRankColor(member.cfRating), fontWeight: 600 }}>
-                          {member.cfRating}
+                      {member.codeforces ? (
+                        <a
+                          href={`https://codeforces.com/profile/${member.codeforces}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          style={member.cfRating ? { color: getCfRankColor(member.cfRating), fontWeight: 600 } : undefined}
+                          className={!member.cfRating ? "text-muted-foreground" : ""}
+                        >
+                          {member.cfRating ?? "—"} ↗
                         </a>
-                      ) : member.codeforces ? (
-                        <a href={`https://codeforces.com/profile/${member.codeforces}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
                       ) : <span className="text-muted-foreground">—</span>}
                     </td>
                   )}
+
+                  {/* CodeChef — profile link only */}
                   {(platform === "all" || platform === "codechef") && (
                     <td className="py-2 pr-3">
-                      {member.ccRating ? (
-                        <a href={`https://www.codechef.com/users/${member.codechef}`} target="_blank" rel="noreferrer" className="font-medium">
-                          {member.ccRating}
-                        </a>
-                      ) : member.codechef ? (
-                        <a href={`https://www.codechef.com/users/${member.codechef}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
+                      {member.codechef ? (
+                        <ProfileLink url={`https://www.codechef.com/users/${member.codechef}`} label={member.codechef} />
                       ) : <span className="text-muted-foreground">—</span>}
                     </td>
                   )}
+
+                  {/* LeetCode — profile link only */}
                   {(platform === "all" || platform === "leetcode") && (
                     <td className="py-2 pr-3">
-                      {member.lcRating ? (
-                        <a href={`https://leetcode.com/u/${member.leetcode}`} target="_blank" rel="noreferrer" className="font-medium">
-                          {member.lcRating}
-                        </a>
-                      ) : member.leetcode ? (
-                        <a href={`https://leetcode.com/u/${member.leetcode}`} target="_blank" rel="noreferrer" className="text-muted-foreground">—</a>
+                      {member.leetcode ? (
+                        <ProfileLink url={`https://leetcode.com/u/${member.leetcode}`} label={member.leetcode} />
                       ) : <span className="text-muted-foreground">—</span>}
                     </td>
                   )}
+
                   <td className="py-2">
                     {member.isAlumni ? (
                       <span className="inline-block px-1.5 py-0.5 text-[10px] bg-muted text-muted-foreground rounded-sm">Alumni</span>
