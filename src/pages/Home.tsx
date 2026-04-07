@@ -1,43 +1,46 @@
-// =============================================
-// HOME PAGE — Edit the data below to update
-// =============================================
+import config from "@/data/config.json";
+import announcements from "@/data/announcements.json";
+import type { Announcement, SiteConfig } from "@/data/types";
 
-// ADD ANNOUNCEMENTS HERE:
-// Copy this template and paste inside the array:
-// { date: "April 10, 2026", text: "Your announcement text here" },
-const announcements: { date: string; text: string }[] = [
-  // { date: "April 10, 2026", text: "Weekly Contest #43 registrations open!" },
-  // { date: "April 5, 2026", text: "Weekly Contest #42 results are out!" },
-];
-
-// EDIT CLUB STATS HERE:
-const stats = {
-  activeMembers: 0,
-  alumni: 0,
-  contestsHosted: 0,
-};
+const siteConfig = config as SiteConfig;
+const announcementList = announcements as Announcement[];
 
 const Home = () => {
   return (
-    <article className="max-w-3xl">
-      <h1 className="text-2xl mb-4 pb-2 border-b border-border">CP Club</h1>
+    <article>
+      <h1 className="text-2xl mb-4 pb-2 border-b border-border">{siteConfig.clubName}</h1>
 
-      <p className="mb-4 text-foreground leading-relaxed">
-        Welcome to the <strong>CP Club</strong> — a community of competitive programmers.
+      <p className="mb-6 text-foreground leading-relaxed">
+        Welcome to <strong>{siteConfig.clubName}</strong> — {siteConfig.description}
       </p>
+
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="bg-card border border-border rounded-sm p-4 text-center">
+          <div className="text-2xl font-bold text-primary">{siteConfig.stats.activeMembers}</div>
+          <div className="text-xs text-muted-foreground mt-1">Active Members</div>
+        </div>
+        <div className="bg-card border border-border rounded-sm p-4 text-center">
+          <div className="text-2xl font-bold text-primary">{siteConfig.stats.alumni}</div>
+          <div className="text-xs text-muted-foreground mt-1">Alumni</div>
+        </div>
+        <div className="bg-card border border-border rounded-sm p-4 text-center">
+          <div className="text-2xl font-bold text-primary">{siteConfig.stats.contestsHosted}</div>
+          <div className="text-xs text-muted-foreground mt-1">Contests Hosted</div>
+        </div>
+      </div>
 
       <h2 className="text-lg mb-3 mt-8 pb-1 border-b border-border">Quick Links</h2>
       <ul className="list-disc pl-6 space-y-1.5 mb-8 text-foreground">
-        <li><a href="/leaderboard">Leaderboard</a> — Member rankings across platforms</li>
-        <li><a href="/contests">Contest Calendar</a> — Upcoming contests and events</li>
-        <li><a href="/editorials">Editorials</a> — Solutions and explanations</li>
+        <li><a href="#/leaderboard">Leaderboard</a> — Member rankings across platforms</li>
+        <li><a href="#/contests">Contest Calendar</a> — Upcoming contests and events</li>
+        <li><a href="#/editorials">Editorials</a> — Solutions and explanations</li>
       </ul>
 
-      {announcements.length > 0 && (
+      {announcementList.length > 0 && (
         <>
           <h2 className="text-lg mb-3 mt-8 pb-1 border-b border-border">Announcements</h2>
           <ul className="space-y-2 mb-8 text-foreground">
-            {announcements.map((a, i) => (
+            {announcementList.map((a, i) => (
               <li key={i} className="flex gap-2">
                 <span className="text-muted-foreground shrink-0">({a.date})</span>
                 <span>{a.text}</span>
@@ -46,26 +49,6 @@ const Home = () => {
           </ul>
         </>
       )}
-
-      <h2 className="text-lg mb-3 mt-8 pb-1 border-b border-border">Statistics</h2>
-      <div className="overflow-x-auto mb-8">
-        <table className="w-full text-left border-collapse">
-          <tbody>
-            <tr className="border-b border-border">
-              <td className="py-2 pr-6 font-medium">Active Members</td>
-              <td className="py-2">{stats.activeMembers}</td>
-            </tr>
-            <tr className="border-b border-border">
-              <td className="py-2 pr-6 font-medium">Alumni</td>
-              <td className="py-2">{stats.alumni}</td>
-            </tr>
-            <tr className="border-b border-border">
-              <td className="py-2 pr-6 font-medium">Contests Hosted</td>
-              <td className="py-2">{stats.contestsHosted}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
     </article>
   );
 };

@@ -1,12 +1,15 @@
-import { Menu, Moon, Sun } from "lucide-react";
+import { Menu, Moon, Sun, X } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 
-interface HeaderProps {
-  onToggleSidebar: () => void;
-}
+const navItems = [
+  { label: "Home", path: "/" },
+  { label: "Leaderboard", path: "/leaderboard" },
+  { label: "Contests", path: "/contests" },
+  { label: "Editorials", path: "/editorials" },
+];
 
-const Header = ({ onToggleSidebar }: HeaderProps) => {
+const Header = () => {
   const location = useLocation();
   const [dark, setDark] = useState(() => {
     if (typeof window !== "undefined") {
@@ -14,20 +17,26 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
     }
     return false;
   });
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("theme", dark ? "dark" : "light");
   }, [dark]);
 
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [location.pathname]);
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-[var(--nav-height)] bg-primary">
-      <div className="h-full flex items-center px-4 gap-3">
+      <div className="max-w-5xl mx-auto h-full flex items-center px-4 gap-3">
+        {/* Mobile menu toggle */}
         <button
-          onClick={onToggleSidebar}
-          className="lg:hidden text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="md:hidden text-primary-foreground/80 hover:text-primary-foreground transition-colors"
         >
-          <Menu size={20} />
+          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
         <Link
@@ -38,17 +47,11 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
             <polyline points="16 18 22 12 16 6" />
             <polyline points="8 6 2 12 8 18" />
           </svg>
-          {/* CHANGE CLUB NAME HERE */}
           <span>CP Club</span>
         </Link>
 
         <nav className="hidden md:flex items-center gap-1 ml-4">
-          {[
-            { label: "Home", path: "/" },
-            { label: "Leaderboard", path: "/leaderboard" },
-            { label: "Contests", path: "/contests" },
-            { label: "Editorials", path: "/editorials" },
-          ].map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
@@ -65,7 +68,6 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
 
         <div className="flex-1" />
 
-        {/* Dark mode toggle */}
         <button
           onClick={() => setDark(!dark)}
           className="text-primary-foreground/70 hover:text-primary-foreground transition-colors p-1.5 rounded-sm hover:bg-primary-foreground/10"
@@ -74,6 +76,27 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
           {dark ? <Sun size={18} /> : <Moon size={18} />}
         </button>
       </div>
+
+      {/* Mobile nav dropdown */}
+      {mobileOpen && (
+        <div className="md:hidden bg-primary border-t border-primary-foreground/10">
+          <div className="max-w-5xl mx-auto px-4 py-2 flex flex-col gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`px-3 py-2 text-xs font-medium rounded-sm no-underline hover:no-underline transition-colors ${
+                  location.pathname === item.path
+                    ? "bg-primary-foreground/15 text-primary-foreground"
+                    : "text-primary-foreground/70 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+                }`}
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
